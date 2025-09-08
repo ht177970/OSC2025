@@ -4,7 +4,7 @@
     description = "U-boot FIT Image for RV2";
     images {
         kernel {
-            description = "Kernel Image";
+            description = "Kernel Image2";
             data = /incbin/("kernel.bin");
             type = "kernel";
             arch = "riscv";
