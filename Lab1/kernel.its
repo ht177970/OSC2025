@@ -15,7 +15,7 @@
         };
         fdt {
             description = "Flat Device Tree";
-            data = /incbin/("x1_orangepi-rv2.dtb");
+            data = /incbin/("../../x1_orangepi-rv2.dtb");
 			type = "flat_dt";
 			arch = "riscv";
 			compression = "none";
