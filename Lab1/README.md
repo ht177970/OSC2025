@@ -12,4 +12,4 @@
 2. edit main.c to use uart
 3. fail and try edit Makefile to add arguments about compile
 4. success on qemu but fail on real RV2
-5. 
+5. fix by removing uart_init() from main.c
