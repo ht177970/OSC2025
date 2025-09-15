@@ -18,20 +18,19 @@ int readline(char* str){
             uart_putc('\n');
             break;
         }
-        else if(c == 0x08){//bs
+        else if(c == 0x08 || c == 0x7f){//bs
             if(pos == 0)
                 continue;
             uart_putc('\b');
             uart_putc(' ');
             uart_putc('\b');
             //replace it with space to do bs
-        }
-        else if(c == 0x7f){//del
-
+            str[--pos] = '\0';
         }
         else{
             str[pos++] = c;
             str[pos] = '\0';
+            uart_putc(c);
         }
     }
     while(pos > 0 && str[pos-1] == ' ')
@@ -57,7 +56,7 @@ void run_shell(){
 
         if(strcmp(buffer, "help") == 0){
             uart_puts("Available commands:\r\n");
-            uart_puts("  help  - show all commands");
+            uart_puts("  help  - show all commands.\r\n");
             uart_puts("  hello - print Hello world.\r\n");
         }
         else if(strcmp(buffer, "hello") == 0){
