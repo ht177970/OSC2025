@@ -1,4 +1,5 @@
 #include "uart.h"
+#include "sbi.h"
 
 #define PROMPT "opi-rv2> "
 
@@ -38,6 +39,18 @@ int readline(char* str){
     return pos;
 }
 
+void print(int x){
+    char num[10];
+    int len = 0;
+    while(x){
+        num[len++] = x%10+'0';
+        x /= 10;
+    }
+    for(int i = len - 1;i >= 0;i--)
+        uart_putc(num[i]);
+    uart_putc('\n');
+}
+
 void run_shell(){
     char buffer[1024];
     while(1){
@@ -58,9 +71,14 @@ void run_shell(){
             uart_puts("Available commands:\r\n");
             uart_puts("  help  - show all commands.\r\n");
             uart_puts("  hello - print Hello world.\r\n");
+            uart_puts("  info  - print system info.\r\n");
         }
         else if(strcmp(buffer, "hello") == 0){
             uart_puts("Hello world.\r\n");
+        }
+        else if(strcmp(buffer, "info") == 0){
+            struct sbiret info = sbi_ecall(0x10, 0x1, 0,0,0,0,0,0);
+            print(info.value);
         }
         else{
             uart_puts("Unknown command: ");
