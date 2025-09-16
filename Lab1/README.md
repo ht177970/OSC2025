@@ -18,4 +18,8 @@
 
 1. write shell logic in shell.c
 2. edit main.c to call run_shell
-3. 
+
+## Part 4: System Information
+
+1. write sbi logic in sbi.c and sbi.h
+2. add info command(edit shell.c)

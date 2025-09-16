@@ -39,8 +39,12 @@ int readline(char* str){
     return pos;
 }
 
-void print(int x){
-    char num[10];
+void print64N(ul x){
+    if(x == 0){
+        uart_putc('0');
+        return;
+    }
+    char num[21];
     int len = 0;
     while(x){
         num[len++] = x%10+'0';
@@ -48,6 +52,45 @@ void print(int x){
     }
     for(int i = len - 1;i >= 0;i--)
         uart_putc(num[i]);
+}
+
+void print64N_h(ul x){
+    char num[15];
+    for(int i = 0; i < 16;i++){
+        int r = x % 16;
+        if(r >= 10)
+            num[15-i] = 'a'+(r-10);
+        else
+            num[15-i] = '0'+r;
+        x >>= 4;
+    }
+    uart_puts("0x");
+    for(int i = 0;i < 16;i++)
+        uart_putc(num[i]);
+}
+
+void show_system_info(){
+    struct sbiret sbi_version = sbi_ecall(0x10, 0x0, 0,0,0,0,0,0);
+    struct sbiret imp_ID = sbi_ecall(0x10, 0x1, 0,0,0,0,0,0);
+    struct sbiret imp_version = sbi_ecall(0x10, 0x2, 0,0,0,0,0,0);
+    uart_puts("System information:\r\n");
+
+    uart_puts("  OpenSBI version: ");
+    ul minor = sbi_version.value & 0xFFFFFUL;
+    ul major = (sbi_version.value >> 24) & 0x7FUL; 
+    print64N(major);
+    uart_putc('.');
+    print64N(minor);
+    uart_putc('\n');
+
+
+    uart_puts("  implementation ID: ");
+    print64N_h(imp_ID.value);
+    uart_putc('\n');
+
+
+    uart_puts("  implementation version: ");
+    print64N_h(imp_version.value);
     uart_putc('\n');
 }
 
@@ -77,8 +120,7 @@ void run_shell(){
             uart_puts("Hello world.\r\n");
         }
         else if(strcmp(buffer, "info") == 0){
-            struct sbiret info = sbi_ecall(0x10, 0x1, 0,0,0,0,0,0);
-            print(info.value);
+            show_system_info();
         }
         else{
             uart_puts("Unknown command: ");
