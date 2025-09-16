@@ -23,3 +23,7 @@
 
 1. write sbi logic in sbi.c and sbi.h
 2. add info command(edit shell.c)
+
+## Advanced Exercise: Device Tree-Based Info
+
+(Skipped)
