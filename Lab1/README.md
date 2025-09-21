@@ -26,4 +26,7 @@
 
 ## Advanced Exercise: Device Tree-Based Info
 
-(Skipped)
+1. ask GPT for dtb.c and dtb.h(need edit something like text in field 'compatible')
+2. edit a.S to pass dtb pointer to main(default dtb pointer save in a1 reg)
+3. edit main.c to receive dtb pointer and init with it
+4. edit sheel.c to support DTB info like model name and uart base address
