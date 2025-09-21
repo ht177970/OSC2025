@@ -3,6 +3,9 @@
 
 #define PROMPT "opi-rv2> "
 
+unsigned int uart_base = UART_BASE;
+char* model_name = "Undefined";
+
 int strcmp(char* a, char* b){
     while(*a && (*a == *b))
         a++, b++;
@@ -65,7 +68,14 @@ void print64N_h(ul x){
         x >>= 4;
     }
     uart_puts("0x");
-    for(int i = 0;i < 16;i++)
+    int all0 = 1;
+    for(int i = 0;i < 8;i++){
+        if(num[i] != '0'){
+            all0 = 0;
+            break;
+        }
+    }
+    for(int i = all0 ? 8 : 0;i < 16;i++)
         uart_putc(num[i]);
 }
 
@@ -91,6 +101,15 @@ void show_system_info(){
 
     uart_puts("  implementation version: ");
     print64N_h(imp_version.value);
+    uart_putc('\n');
+
+    uart_puts("DTB information:\n");
+    uart_puts("  UART base address: ");
+    print64N_h(uart_base);
+    uart_putc('\n');
+
+    uart_puts("  Model name: ");
+    uart_puts(model_name);
     uart_putc('\n');
 }
 

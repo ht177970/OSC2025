@@ -4,6 +4,7 @@
 
 _start:
     la sp, __stack_top
+    mv a0, a1
     la t0, __bss_start
     la t1, __bss_end
 
