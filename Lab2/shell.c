@@ -128,22 +128,30 @@ void run_shell(){
 
         if(pos == 0)
             continue;//empty line
-
-        if(strcmp(buffer, "help") == 0){
+        char* nbuf = buffer+st;
+        if(strcmp(nbuf, "help") == 0){
             uart_puts("Available commands:\r\n");
-            uart_puts("  help  - show all commands.\r\n");
-            uart_puts("  hello - print Hello world.\r\n");
-            uart_puts("  info  - print system info.\r\n");
+            uart_puts("  help   - show all commands.\r\n");
+            uart_puts("  hello  - print Hello world.\r\n");
+            uart_puts("  info   - print system info.\r\n");
+            uart_puts("  reboot - reboot system.\r\n");
+            uart_puts("  load   - start UART loading kernel mode.\r\n");
         }
-        else if(strcmp(buffer, "hello") == 0){
+        else if(strcmp(nbuf, "hello") == 0){
             uart_puts("Hello world.\r\n");
         }
-        else if(strcmp(buffer, "info") == 0){
+        else if(strcmp(nbuf, "info") == 0){
             show_system_info();
+        }
+        else if(strcmp(nbuf, "reboot") == 0){
+            sbi_system_reboot();
+        }
+        else if(strcmp(nbuf, "load") == 0){
+            //load_kernel_UART();
         }
         else{
             uart_puts("Unknown command: ");
-            uart_puts(buffer);
+            uart_puts(nbuf);
             uart_puts("\r\nUse help to get commands.\r\n");
         }
 
