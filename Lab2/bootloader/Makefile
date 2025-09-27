@@ -1,6 +1,7 @@
 RISCVGUN ?= riscv64-unknown-elf
 
-SRC_FILES := $(wildcard *.S) $(wildcard *.c)
+SRC_FILES = $(shell find . -name "*.S") \
+            $(shell find . -name "*.c")
 
 OBJ_FILES = $(addprefix build/, $(addsuffix .o, \
             $(basename $(notdir $(SRC_FILES)))))

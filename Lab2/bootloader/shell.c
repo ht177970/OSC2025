@@ -114,9 +114,45 @@ void show_system_info(){
     uart_putc('\n');
 }
 
-void jump_bootloader(ul dtb){
-    char* add = (char*)0x40200000;
-    ((int(*)(ul, ul))add)(0, dtb);
+void load_kernel_UART(uint64_t dtb){
+    ul kernel_size = 0;
+    
+    uart_puts("Waiting for script of sending kernel...\r\n");
+
+    for(int i = 0;i < 32;i++){
+        int b = uart_getc()-'0';
+        kernel_size <<= 1;
+        kernel_size |= b;
+    }
+
+    uart_puts("Kernel size: ");
+    print64N(kernel_size);
+    uart_puts(" bytes\n");
+    
+    char* add = (char*)(0x00200000ul);
+    for(ul i = 0;i < kernel_size;i++){
+        add[i] = uart_getb();
+        if(kernel_size-i <= 100 || i % 128 == 0){
+            print64N(i);
+            uart_putc('/');
+            print64N(kernel_size);
+            uart_puts(" bytes received.\n");
+        }
+    }
+    uart_puts("File received.\r\n");
+    
+    //((int(*)(ul, uint64_t))add)(0, dtb);
+    register unsigned long in0 asm("a0") = 0;
+    register unsigned long in1 asm("a1") = (unsigned long)dtb;
+    register void *fn asm("t0") = (void*)add;
+    register unsigned long out asm("a0");
+
+    asm volatile (
+        "jalr ra, %2, 0\n"
+        : "=r"(out)                 /* output: ret in a0 */
+        : "0"(in0), "r"(fn), "r"(in1) /* "0"(in0) ties output slot 0 to in0 register */
+        : "ra", "memory"
+    );
 }
 
 void run_shell(uint64_t dtb){
@@ -141,7 +177,7 @@ void run_shell(uint64_t dtb){
             uart_puts("  hello  - print Hello world.\r\n");
             uart_puts("  info   - print system info.\r\n");
             uart_puts("  reboot - reboot system.\r\n");
-            uart_puts("  exit   - jump back to bootloader.\r\n");
+            uart_puts("  load   - start UART loading kernel mode.\r\n");
         }
         else if(strcmp(nbuf, "hello") == 0){
             uart_puts("Hello world.\r\n");
@@ -152,10 +188,8 @@ void run_shell(uint64_t dtb){
         else if(strcmp(nbuf, "reboot") == 0){
             sbi_system_reboot();
         }
-        else if(strcmp(nbuf, "exit") == 0){
-            uart_puts("Exit uart kernel.\n");
-            jump_bootloader(dtb);
-            break;
+        else if(strcmp(nbuf, "load") == 0){
+            load_kernel_UART(dtb);
         }
         else{
             uart_puts("Unknown command: ");

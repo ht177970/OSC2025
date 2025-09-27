@@ -16,3 +16,7 @@ clear_bss:
 
 boot:
     call run_kernel
+
+lp:
+    wfi
+    j lp

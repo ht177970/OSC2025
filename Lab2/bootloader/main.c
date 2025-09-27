@@ -4,8 +4,9 @@
 
 int run_kernel(uint64_t dtb){
     uart_puts("##############################\n");
-    uart_puts("#        OSC2025 kernel      #\n");
+    uart_puts("#      OSC2025 bootloader    #\n");
     uart_puts("##############################\n");
+    uart_puts("");
     if(dtb){
         const char* model = fdt_get_model((const void*)(uintptr_t)dtb);
         uint64_t ub = fdt_get_uart_base((const void*)(uintptr_t)dtb);
