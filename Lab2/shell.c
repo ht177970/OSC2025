@@ -140,7 +140,7 @@ void run_shell(uint64_t dtb){
             uart_puts("  help   - show all commands.\r\n");
             uart_puts("  hello  - print Hello world.\r\n");
             uart_puts("  info   - print system info.\r\n");
-            uart_puts("  reboot - reboot system.\r\n");
+            //uart_puts("  reboot - reboot system.\r\n");
             uart_puts("  exit   - jump back to bootloader.\r\n");
         }
         else if(strcmp(nbuf, "hello") == 0){
@@ -149,9 +149,9 @@ void run_shell(uint64_t dtb){
         else if(strcmp(nbuf, "info") == 0){
             show_system_info();
         }
-        else if(strcmp(nbuf, "reboot") == 0){
+        /*else if(strcmp(nbuf, "reboot") == 0){
             sbi_system_reboot();
-        }
+        }*/
         else if(strcmp(nbuf, "exit") == 0){
             uart_puts("Exit uart kernel.\n");
             jump_bootloader(dtb);
