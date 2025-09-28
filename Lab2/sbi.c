@@ -1,7 +1,7 @@
 #include "sbi.h"
 #include <stdint.h>
 
-#define WARM_REBOOT 0x1
+#define WARM_REBOOT 0x2
 #define NO_REASON 0x0
 
 struct sbiret sbi_ecall(int ext, int fid, ul arg0, ul arg1, ul arg2,
@@ -28,5 +28,5 @@ struct sbiret sbi_ecall(int ext, int fid, ul arg0, ul arg1, ul arg2,
 }
 
 struct sbiret sbi_system_reboot(){
-    return sbi_ecall(SBI_EXT_SRST, 0x0, WARM_REBOOT, NO_REASON, 0x0, 0x0, 0x0, 0x0);
+    return sbi_ecall(0x8, 0x0, WARM_REBOOT, NO_REASON, 0x0, 0x0, 0x0, 0x0);
 }
