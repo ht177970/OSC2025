@@ -1,17 +1,12 @@
 #include <stdint.h>
 #include "uart.h"
 #include "sbi.h"
+#include "utils.h"
 
 #define PROMPT "opi-rv2> "
 
 unsigned int uart_base = UART_BASE;
 char* model_name = "Undefined";
-
-int strcmp(char* a, char* b){
-    while(*a && (*a == *b))
-        a++, b++;
-    return (int)(*a-*b);
-}
 
 int readline(char* str){
     int pos = 0;
@@ -41,43 +36,6 @@ int readline(char* str){
     while(pos > 0 && str[pos-1] == ' ')
         str[pos-1] = '\0', pos--;
     return pos;
-}
-
-void print64N(ul x){
-    if(x == 0){
-        uart_putc('0');
-        return;
-    }
-    char num[21];
-    int len = 0;
-    while(x){
-        num[len++] = x%10+'0';
-        x /= 10;
-    }
-    for(int i = len - 1;i >= 0;i--)
-        uart_putc(num[i]);
-}
-
-void print64N_h(ul x){
-    char num[15];
-    for(int i = 0; i < 16;i++){
-        int r = x % 16;
-        if(r >= 10)
-            num[15-i] = 'a'+(r-10);
-        else
-            num[15-i] = '0'+r;
-        x >>= 4;
-    }
-    uart_puts("0x");
-    int all0 = 1;
-    for(int i = 0;i < 8;i++){
-        if(num[i] != '0'){
-            all0 = 0;
-            break;
-        }
-    }
-    for(int i = all0 ? 8 : 0;i < 16;i++)
-        uart_putc(num[i]);
 }
 
 void show_system_info(){
