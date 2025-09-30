@@ -9,4 +9,9 @@
 
 ## Part 2: Initial Ramdisk
 
-
+1. From FreeBSD site copy cpio struct to initrd.h
+2. write cpio walk logic to initrd.c
+3. edit Makefile to create .cpio
+4. edit bootloader to receive .cpio
+5. by cpio walk, list all files(ls)
+6. by cpio walk, cat file(cat)
