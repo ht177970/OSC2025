@@ -102,6 +102,7 @@ void run_shell(uint64_t dtb){
             //uart_puts("  reboot - reboot system.\r\n");
             uart_puts("  exit   - jump back to bootloader.\r\n");
             uart_puts("  ls     - list files.\r\n");
+            uart_puts("  cat    - show file content.\r\n");
         }
         else if(strcmp(nbuf, "hello") == 0){
             uart_puts("Hello world.\r\n");
@@ -120,8 +121,8 @@ void run_shell(uint64_t dtb){
         else if(strcmp(nbuf, "ls") == 0){
             initrd_list();
         }
-        else if(strcmp(nbuf, "test") == 0){
-            test();
+        else if(strncmp(nbuf, "cat", 3) == 0){
+            initrd_cat(nbuf+4); 
         }
         else{
             uart_puts("Unknown command: ");

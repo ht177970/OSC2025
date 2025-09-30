@@ -15,8 +15,7 @@ struct cpio_newc_header {
    char    c_rdevminor[8];
    char    c_namesize[8];
    char    c_check[8];
- };
+};
 
- void initrd_list();
- void test();
-
+void initrd_list();
+void initrd_cat();

@@ -4,6 +4,7 @@
 
 void swap(void*,void*);
 int HtoI(char*,int);
+int strlen(char*);
 int strcmp(char*, char*);
 int strncmp(char*,char*,int);
 void print64N(ul);

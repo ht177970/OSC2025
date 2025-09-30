@@ -24,6 +24,14 @@ int HtoI(char* a, int n){
     return res;
 }
 
+int strlen(char* c){
+    int res = 0;
+    int MAX=1e7;
+    while(*c && MAX-- > 0)
+        res++,c++;
+    return res;
+}
+
 int strcmp(char* a, char* b){
     while(*a && *b && (*a == *b))
         a++, b++;

@@ -45,11 +45,31 @@ void initrd_list(){
     }
 }
 
-void test(){
-    char* tmp = cpio_base;
-    char c;
-    while((c = uart_getc()) != '0'){
-        uart_putc(*tmp);
-        tmp++;
+void initrd_cat(char* name){
+    char* now = cpio_base;
+    const char* nxt = 0;
+    int len = strlen(name);
+    while((nxt = next(now)) != 0){
+        struct cpio_newc_header* header = (struct cpio_newc_header*)now;
+        if(strncmp(header->c_magic, "070701", 6)){
+            uart_puts("ERRO: File System CORRUPTED!\n");
+            break;
+        }
+        int namesz = HtoI(header->c_namesize, 8);
+        char* tmp = now+sizeof(struct cpio_newc_header);
+        if(strcmp(tmp, name) == 0){
+            namesz += sizeof(struct cpio_newc_header);
+            namesz += pad4(namesz);
+            char* content = now+namesz;
+            int datasz = HtoI(header->c_filesize, 8);
+            for(int i = 0;i < datasz;i++)
+                uart_putc(*content), content++;
+            uart_putc('\n');
+            return;
+        }
+        now = nxt;
     }
+    uart_puts("cat: File not found.(");
+    uart_puts(name);
+    uart_puts(")\r\n");
 }
