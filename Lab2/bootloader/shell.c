@@ -162,7 +162,7 @@ void load_kernelcpio_UART(uint64_t dtb){
         if(i % 512 == 0){
             print64N(i);
             uart_putc('/');
-            print64N(kernel_size);
+            print64N(cpio_size);
             uart_puts(" bytes received.\n");
         }
     }
