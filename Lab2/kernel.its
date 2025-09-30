@@ -21,6 +21,15 @@
 			compression = "none";
 			load = <0x0 0x31000000>;
         };
+		ramdisk {
+			description = "Initial Ramdisk";
+			data = /incbin/("../res/initramfs.cpio");
+			type = "ramdisk";
+			arch = "riscv";
+			os = "linux";
+			compression = "none";
+			load = <0x0 0x21000000>;
+		};
     };
 
 	configurations {
