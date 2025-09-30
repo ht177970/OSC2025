@@ -10,9 +10,10 @@ CFLAGS = -march=rv64gc_zicbom -ffreestanding -mcmodel=medany -Wall -g
 all: clean kernel
 
 clean:
-	rm -rf build *.fit *.o
+	rm -rf build *.fit *.o initramfs.cpio
 
 build:
+	cd rootfs && find . | cpio -o -H newc > ../initramfs.cpio
 	$(RISCVGUN)-gcc $(CFLAGS) -c $(SRC_FILES)
 	@mkdir -p build
 	@mv *.o build
