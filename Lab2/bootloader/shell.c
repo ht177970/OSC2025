@@ -114,6 +114,79 @@ void show_system_info(){
     uart_putc('\n');
 }
 
+void load_kernelcpio_UART(uint64_t dtb){
+    ul kernel_size = 0;
+    
+    uart_puts("Waiting for script of sending kernel...\r\n");
+
+    for(int i = 0;i < 32;i++){
+        int b = uart_getc()-'0';
+        kernel_size <<= 1;
+        kernel_size |= b;
+    }
+
+    uart_puts("Kernel size: ");
+    print64N(kernel_size);
+    uart_puts(" bytes\n");
+    
+    char* add = (char*)(0x00200000ul);
+    for(ul i = 0;i < kernel_size;i++){
+        add[i] = uart_getb();
+        if(i % 512 == 0){
+            print64N(i);
+            uart_putc('/');
+            print64N(kernel_size);
+            uart_puts(" bytes received.\n");
+        }
+    }
+    print64N(kernel_size);
+    uart_putc('/');
+    print64N(kernel_size);
+    uart_puts(" bytes received.\n");
+
+    ul cpio_size = 0;
+
+    for(int i = 0;i < 32;i++){
+        int b = uart_getc()-'0';
+        cpio_size <<= 1;
+        cpio_size |= b;
+    }
+
+    uart_puts("cpio size: ");
+    print64N(cpio_size);
+    uart_puts(" bytes\n");
+
+    char* add2 = (char*)(0x21000000ul);
+    for(ul i = 0;i < cpio_size;i++){
+        add2[i] = uart_getb();
+        if(i % 512 == 0){
+            print64N(i);
+            uart_putc('/');
+            print64N(kernel_size);
+            uart_puts(" bytes received.\n");
+        }
+    }
+
+    print64N(cpio_size);
+    uart_putc('/');
+    print64N(cpio_size);
+    uart_puts(" bytes received.\n");
+    
+    //((int(*)(ul, uint64_t))add)(0, dtb);
+    register unsigned long in0 asm("a0") = 0;
+    register unsigned long in1 asm("a1") = (unsigned long)dtb;
+    register void *fn asm("t0") = (void*)add;
+    register unsigned long out asm("a0");
+
+    asm volatile (
+        "jalr ra, %2, 0\n"
+        : "=r"(out)                 /* output: ret in a0 */
+        : "0"(in0), "r"(fn), "r"(in1) /* "0"(in0) ties output slot 0 to in0 register */
+        : "ra", "memory"
+    );
+}
+
+
 void load_kernel_UART(uint64_t dtb){
     ul kernel_size = 0;
     
@@ -173,11 +246,12 @@ void run_shell(uint64_t dtb){
         char* nbuf = buffer+st;
         if(strcmp(nbuf, "help") == 0){
             uart_puts("Available commands:\r\n");
-            uart_puts("  help   - show all commands.\r\n");
-            uart_puts("  hello  - print Hello world.\r\n");
-            uart_puts("  info   - print system info.\r\n");
-            uart_puts("  reboot - reboot system.\r\n");
-            uart_puts("  load   - start UART loading kernel mode.\r\n");
+            uart_puts("  help    - show all commands.\r\n");
+            uart_puts("  hello   - print Hello world.\r\n");
+            uart_puts("  info    - print system info.\r\n");
+            uart_puts("  reboot  - reboot system.\r\n");
+            uart_puts("  load    - start UART loading kernel mode(both img and cpio).\r\n");
+            uart_puts("  loadimg - start UART loading kernel mode(only img).\r\n");
         }
         else if(strcmp(nbuf, "hello") == 0){
             uart_puts("Hello world.\r\n");
@@ -189,6 +263,9 @@ void run_shell(uint64_t dtb){
             sbi_system_reboot();
         }
         else if(strcmp(nbuf, "load") == 0){
+            load_kernelcpio_UART(dtb);
+        }
+        else if(strcmp(nbuf, "loadimg") == 0){
             load_kernel_UART(dtb);
         }
         else{
