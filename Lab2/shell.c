@@ -2,6 +2,7 @@
 #include "uart.h"
 #include "sbi.h"
 #include "utils.h"
+#include "initrd.h"
 
 #define PROMPT "opi-rv2> "
 
@@ -100,6 +101,7 @@ void run_shell(uint64_t dtb){
             uart_puts("  info   - print system info.\r\n");
             //uart_puts("  reboot - reboot system.\r\n");
             uart_puts("  exit   - jump back to bootloader.\r\n");
+            uart_puts("  ls     - list files.\r\n");
         }
         else if(strcmp(nbuf, "hello") == 0){
             uart_puts("Hello world.\r\n");
@@ -114,6 +116,9 @@ void run_shell(uint64_t dtb){
             uart_puts("Exit uart kernel.\n");
             jump_bootloader(dtb);
             break;
+        }
+        else if(strcmp(nbuf, "ls") == 0){
+            initrd_list();
         }
         else{
             uart_puts("Unknown command: ");
