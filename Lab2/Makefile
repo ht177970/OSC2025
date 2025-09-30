@@ -13,7 +13,7 @@ clean:
 	rm -rf build *.fit *.o initramfs.cpio
 
 build:
-	cd rootfs && find . | cpio -o -H newc > ../initramfs.cpio
+	cd rootfs && find . -mindepth 1 | cpio -o -H newc > ../initramfs.cpio
 	$(RISCVGUN)-gcc $(CFLAGS) -c $(SRC_FILES)
 	@mkdir -p build
 	@mv *.o build
