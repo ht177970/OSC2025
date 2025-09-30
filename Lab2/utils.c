@@ -1,10 +1,42 @@
 #include "utils.h"
 #include "uart.h"
 
+void swap(void* a, void* b){
+    void* c = a;
+    a = b;
+    b = c;
+}
+
+int HtoI(char* a, int n){
+    int res = 0;
+    for(int i = 0;i < n;i++){
+        res <<= 4;
+        if('0' <= *a && *a <= '9')
+            res += *a-'0';
+        else if('A' <= *a && *a <= 'Z')
+            res += *a-'A';
+        else if('a'<= *a && *a <= 'z')
+            res += *a-'a';
+        else
+            res = 0;
+        a++; 
+    }
+    return res;
+}
+
 int strcmp(char* a, char* b){
     while(*a && *b && (*a == *b))
         a++, b++;
     return (int)(*a-*b);
+}
+
+int strncmp(char* a, char* b, int n){
+    while(n-- > 0){
+        if(*a != *b)
+            return *a-*b;
+        a++,b++;
+    }
+    return 0;
 }
 
 void print64N(ul x){
