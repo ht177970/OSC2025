@@ -14,9 +14,9 @@ int HtoI(char* a, int n){
         if('0' <= *a && *a <= '9')
             res += *a-'0';
         else if('A' <= *a && *a <= 'Z')
-            res += *a-'A';
+            res += *a-'A'+10;
         else if('a'<= *a && *a <= 'z')
-            res += *a-'a';
+            res += *a-'a'+10;
         else
             res = 0;
         a++; 
