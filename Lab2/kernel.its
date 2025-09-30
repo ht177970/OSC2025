@@ -39,6 +39,7 @@
 			description = "NYCU RV2 KERNEL";
 			kernel = "kernel";
 			fdt = "fdt";
+            ramdisk = "ramdisk";
 		};
 	};
 };

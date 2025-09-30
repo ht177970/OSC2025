@@ -5,7 +5,7 @@ SRC_FILES := $(wildcard *.S) $(wildcard *.c)
 OBJ_FILES = $(addprefix build/, $(addsuffix .o, \
             $(basename $(notdir $(SRC_FILES)))))
 
-CFLAGS = -march=rv64gc_zicbom -ffreestanding -mcmodel=medany -Wall -g
+CFLAGS = -march=rv64gc_zicbom -ffreestanding -mcmodel=medany -Wall -g -fomit-frame-pointer
 
 all: clean kernel
 
@@ -19,10 +19,10 @@ build:
 	@mv *.o build
 
 kernel: build
-	$(RISCVGUN)-gcc -T linker.ld -nostdlib -o build/kernel.elf $(OBJ_FILES)
+	$(RISCVGUN)-gcc -T linker.ld -nostdlib -o build/kernel.elf $(OBJ_FILES) -lgcc
 	$(RISCVGUN)-objcopy -O binary build/kernel.elf build/kernel.bin
 	mkimage -f kernel.its build/kernel.fit >> /dev/null
 
 qemu: CFLAGS += -D __QEMU__
 qemu: all
-	qemu-system-riscv64 -M virt -serial stdio -kernel build/kernel.bin
+	qemu-system-riscv64 -M virt -serial stdio -kernel build/kernel.bin -initrd initramfs.cpio

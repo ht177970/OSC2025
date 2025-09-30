@@ -120,6 +120,9 @@ void run_shell(uint64_t dtb){
         else if(strcmp(nbuf, "ls") == 0){
             initrd_list();
         }
+        else if(strcmp(nbuf, "test") == 0){
+            test();
+        }
         else{
             uart_puts("Unknown command: ");
             uart_puts(nbuf);

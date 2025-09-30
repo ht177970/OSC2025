@@ -26,10 +26,14 @@ char* next(const char* now){
 }
 
 void initrd_list(){
-    const char* now = cpio_base;
+    char* now = cpio_base;
     const char* nxt = 0;
     while((nxt = next(now)) != 0){
         struct cpio_newc_header* header = (struct cpio_newc_header*)now;
+        if(strncmp(header->c_magic, "070701", 6)){
+            uart_puts("ERRO: File System CORRUPTED!\n");
+            break;
+        }
         int namesz = HtoI(header->c_namesize, 8);
         char* tmp = now+sizeof(struct cpio_newc_header);
         for(int i = 0;i < namesz;i++){
@@ -37,6 +41,15 @@ void initrd_list(){
             tmp++;
         }
         uart_putc('\n');
-        swap(now, nxt);
+        now = nxt;
+    }
+}
+
+void test(){
+    char* tmp = cpio_base;
+    char c;
+    while((c = uart_getc()) != '0'){
+        uart_putc(*tmp);
+        tmp++;
     }
 }
