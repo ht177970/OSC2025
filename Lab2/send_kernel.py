@@ -10,15 +10,10 @@ def getBinary(x):
         ret += c01[0]
     return ret[::-1].encode()
 
-with open('build/kernel.bin', 'rb') as f:
-    raw = f.read()
-    print(type(raw))
-    length = len(raw)
-    print(f"Kernel size: {getBinary(length)}({length})")
-    print(raw[0])
-    print(bytes(raw[0]))
-    print(raw[0:1])
-    with Serial("/dev/ttyUSB0", 115200) as ser:
+with Serial("/dev/ttyUSB0", 115200) as ser:
+    with open('build/kernel.bin', 'rb') as f:
+        raw = f.read()
+        length = len(raw)
         #send kernel size in binary
         print("Start to send kernel size to UART in binary.")
         ser.write(getBinary(length))
@@ -30,5 +25,4 @@ with open('build/kernel.bin', 'rb') as f:
             ser.write(raw[i:i+1])
             ser.flush()
             print(f"{i+1}/{length} bytes sent.")
-        print("OK")
 
